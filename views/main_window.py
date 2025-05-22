@@ -21,9 +21,7 @@ class MainWindow(QMainWindow):
         self.file_btn = QPushButton("Wybierz plik")
         self.file_btn.setObjectName("file_button")
         self.file_btn.clicked.connect(self.choose_file)
-        file_layout = QVBoxLayout()
-        file_layout.addWidget(self.file_label)
-        file_layout.addWidget(self.file_btn)
+
 
         # 2) Konfiguracja szyfrowania:
         self.mode_combo = QComboBox()
@@ -41,14 +39,22 @@ class MainWindow(QMainWindow):
         self.decrypt_btn = QPushButton("Decrypt")
         self.gen_key_and_iv = QPushButton("Generate Key and IV")
 
-
+        self.success_txt = QLabel("Operacja zakończona sukcesem!")
 
         config_container = QWidget()
         config_container.setObjectName("configuration_container")
         config_container.setMaximumWidth(400)
 
+
+
         config_layout = QVBoxLayout(config_container)
         config_layout.setAlignment(PySide6.QtCore.Qt.AlignTop)
+
+        file_layout = QVBoxLayout()
+        file_layout.addWidget(self.file_label)
+        file_layout.addWidget(self.file_btn)
+
+        config_layout.addLayout(file_layout)
 
         form = QFormLayout()
         form.setVerticalSpacing(12)
@@ -63,8 +69,10 @@ class MainWindow(QMainWindow):
         form.addRow(self.decrypt_btn)
         form.addRow(self.gen_key_and_iv)
 
-        config_layout.addLayout(form)
 
+
+        config_layout.addLayout(form)
+        config_layout.addWidget(self.success_txt)
         # 3) Główny układ
         main_layout = QHBoxLayout(central)
         main_layout.addLayout(file_layout)
