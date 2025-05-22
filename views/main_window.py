@@ -13,54 +13,10 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(700, 600)
 
 
-        # Centralny widget (serce GUI)
-        # central_widget = QWidget()
-        # self.setCentralWidget(central_widget)
-        #
-        # self.modeSelection = QComboBox()
-        # self.modeSelection.addItems(["ECB", "CBC", "CTR"])
-        #
-        # self.select_file_label = QLabel("Nie wybrano pliku.")
-        # self.select_file_btn = QPushButton("Wybierz plik")
-        # self.select_file_btn.setObjectName("selectFileBtn")
-        #
-        # self.select_file_btn.clicked.connect(self.choose_file)
-        #
-        # key_label = QLabel("HASŁO:")
-        # mode_selection_label = QLabel("TRYB:")
-        #
-        # configuration_container = QWidget()
-        # configuration_container.setObjectName("configuration_container")
-        #
-        #
-        # mainLayout = QHBoxLayout()
-        # configuration_layout = QVBoxLayout(configuration_container)
-        # configuration_layout.setContentsMargins(25, 1, 25, 50)
-        #
-        # keyConfiguration = QHBoxLayout()
-        # modeConfiguration = QHBoxLayout()
-        #
-        #
-        #
-        #
-        # selection_layout = QVBoxLayout()
-        #
-        # selection_layout.addWidget(self.select_file_label)
-        # selection_layout.addWidget(self.select_file_btn)
-        #
-        # configuration_layout.setAlignment(PySide6.QtCore.Qt.AlignTop)
-        # configuration_layout.addWidget(mode_selection_label)
-        # configuration_layout.addWidget(self.modeSelection)
-        #
-        # mainLayout.addLayout(selection_layout)
-        # mainLayout.addLayout(configuration_layout)
-        # central_widget.setLayout(mainLayout)
-
-
         central = QWidget(self)
         self.setCentralWidget(central)
 
-        # 1) File picker
+        # 1) Wybór pliku:
         self.file_label = QLabel("Nie wybrano pliku.")
         self.file_btn = QPushButton("Wybierz plik")
         self.file_btn.setObjectName("file_button")
@@ -69,11 +25,23 @@ class MainWindow(QMainWindow):
         file_layout.addWidget(self.file_label)
         file_layout.addWidget(self.file_btn)
 
-        # 2) Configuration (mode + password)
+        # 2) Konfiguracja szyfrowania:
         self.mode_combo = QComboBox()
         self.mode_combo.addItems(["ECB", "CBC", "CTR"])
+
+        self.alg_combo = QComboBox()
+        self.alg_combo.addItems(["AES", "DES"])
+
         self.password_edit = QLineEdit()
         self.password_edit.setEchoMode(QLineEdit.Password)
+
+        self.iv_edit = QLineEdit()
+
+        self.encrypt_btn = QPushButton("Encrypt")
+        self.decrypt_btn = QPushButton("Decrypt")
+        self.gen_key_and_iv = QPushButton("Generate Key and IV")
+
+
 
         config_container = QWidget()
         config_container.setObjectName("configuration_container")
@@ -87,7 +55,14 @@ class MainWindow(QMainWindow):
         form.setHorizontalSpacing(20)
 
         form.addRow("TRYB:", self.mode_combo)
+        form.addRow("ALGORYTM:", self.alg_combo)
         form.addRow("HASŁO:", self.password_edit)
+        form.addRow("IV:", self.iv_edit)
+
+        form.addRow(self.encrypt_btn)
+        form.addRow(self.decrypt_btn)
+        form.addRow(self.gen_key_and_iv)
+
         config_layout.addLayout(form)
 
         # 3) Główny układ

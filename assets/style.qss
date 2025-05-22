@@ -63,7 +63,7 @@ QLineEdit, QComboBox {
     background-color: #3e3e3e;
     border: 1px solid #5a5a5a;
     border-radius: 4px;
-    padding: 6px 10px;
+    padding: 3px 10px;
     font-size: 14px;
     color: #ffffff;
 }
