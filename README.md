@@ -2,6 +2,16 @@
 
 Projekt edukacyjny w pythonie mający na celu eksplorację różnych sposobów szyfrowania plików.
 
+# Zasada Działania
+
+### TODO
+
+# Funkcjonalności
+
+### TODO
+
+# Przykłady użycia
+
 # Budowanie
 
 ## Windows
