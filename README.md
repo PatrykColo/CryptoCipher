@@ -15,3 +15,7 @@ Projekt edukacyjny w pythonie mający na celu eksplorację różnych sposobów s
 # Szczegóły techniczne
 
 Interfejs aplikacji napisany jest za pomocą biblioteki PySide6, funkcje kryptograficzne wzięte są z biblioteki krypto.
+
+# Referencje
+
+Strona z obrazami testowymi: https://openclipart.org
