@@ -4,11 +4,14 @@ import PySide6
 from PySide6.QtWidgets import QMainWindow, QLabel, QPushButton, QWidget, QVBoxLayout, QFileDialog, QHBoxLayout, \
     QComboBox, QFormLayout, QLineEdit
 
+from controller.controller import encrypt, decrypt
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.selected_file = None
         self.setWindowTitle("CryptoCypher1.0")
         self.setMinimumSize(700, 600)
 
@@ -36,10 +39,14 @@ class MainWindow(QMainWindow):
         self.iv_edit = QLineEdit()
 
         self.encrypt_btn = QPushButton("Encrypt")
+        self.encrypt_btn.clicked.connect(self.encrypt_file)
+
         self.decrypt_btn = QPushButton("Decrypt")
+        self.decrypt_btn.clicked.connect(self.decrypt_file)
+
         self.gen_key_and_iv = QPushButton("Generate Key and IV")
 
-        self.success_txt = QLabel("Operacja zakończona sukcesem!")
+        self.info_box = QLabel("Operacja zakończona sukcesem!")
 
         config_container = QWidget()
         config_container.setObjectName("configuration_container")
@@ -72,7 +79,7 @@ class MainWindow(QMainWindow):
 
 
         config_layout.addLayout(form)
-        config_layout.addWidget(self.success_txt)
+        config_layout.addWidget(self.info_box)
         # 3) Główny układ
         main_layout = QHBoxLayout(central)
         main_layout.addLayout(file_layout)
@@ -85,10 +92,27 @@ class MainWindow(QMainWindow):
         file_path, _ = QFileDialog.getOpenFileName(
             self,
             "Wybierz plik",
-            os.path.expanduser("~"),  # katalog domowy jako startowy
-            "Pliki tekstowe (*.txt);;Wszystkie pliki (*)"
+            # os.path.expanduser("~"),  # katalog domowy jako startowy
+            os.path.abspath("memory/"),
+            "Wszystkie pliki (*);;Pliki tekstowe (*.txt)"
         )
 
         if file_path:
-            self.select_file_label.setText(f"Wybrano: {os.path.basename(file_path)}")
-            self.process_file(file_path) #TODO
+            self.selected_file = file_path
+            self.file_label.setText(f"Wybrano: {os.path.basename(file_path)}")
+            # print(self.mode_combo.currentText())
+            # print(self.alg_combo.currentText())
+            # self.process_file(file_path) #TODO
+
+    def encrypt_file(self):
+        if self.selected_file is None:
+            print("null")
+            # self.info_box = "chujnia" #TODO IMPLEMENT CONTAINER WITH INFO WHEN FILE NOT CHOSEN
+
+        encrypt(self.selected_file, self.alg_combo.currentText(), self.mode_combo.currentText(), self.password_edit.text())
+
+    def decrypt_file(self):
+        if self.selected_file is None:
+            print("ups something wrong pls fix me ")
+            #self.info_box = "-_-"
+        decrypt(self.selected_file, self.alg_combo.currentText(), self.mode_combo.currentText(), self.password_edit.text())
