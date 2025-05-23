@@ -11,7 +11,7 @@ QWidget#configuration_container{
     padding: 12px;
 }
 
-#config_btn{
+config_btn{
     background: none;
     border: 2px solid #8d9491;
     cursor: pointer;
@@ -19,7 +19,7 @@ QWidget#configuration_container{
     padding: 10px;
 }
 
-#config_btn:hover{
+config_btn:hover{
     background-color: #8d9491;
 }
 
@@ -34,12 +34,12 @@ QLabel {
 
 
 
-#mainLabel {
+mainLabel {
     font-size: 18px;
     color: #2c3e50;
     margin: 10px;
 }
-#file_button {
+file_button {
     background-color: #8d9491;
     color: white;
     padding: 4px;
@@ -49,15 +49,15 @@ QLabel {
     font-size: 15px;
 }
 
-#file_button:hover {
+file_button:hover {
     background-color: #779491;
 }
 
-#file_button:pressed {
+file_button:pressed {
     background-color: #3f7dc1;
 }
 
-#info_label{
+info_label{
     color: #ffffff;
     font-family: "Segue UI", "Roboto", sans-serif;
     font-size: 14px;
@@ -80,7 +80,7 @@ QComboBox:focus {
 QComboBox QAbstractItemView {
     background-color: #3e3e3e;
     selection-background-color: #5a9bd8;
-    #color: #ffffff;
+    color: #ffffff;
 }
 
 
