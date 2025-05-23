@@ -4,7 +4,8 @@ import PySide6
 from PySide6.QtWidgets import QMainWindow, QLabel, QPushButton, QWidget, QVBoxLayout, QFileDialog, QHBoxLayout, \
     QComboBox, QFormLayout, QLineEdit
 
-from controller.controller import encrypt, decrypt
+from controller.controller import encrypt, decrypt, encrypt_any_file, encrypt_bmp_file, \
+    decrypt_any_file, decrypt_bmp_file
 
 
 class MainWindow(QMainWindow):
@@ -105,14 +106,29 @@ class MainWindow(QMainWindow):
             # self.process_file(file_path) #TODO
 
     def encrypt_file(self):
-        if self.selected_file is None:
+        f = self.selected_file
+        if f is None:
             print("null")
             # self.info_box = "chujnia" #TODO IMPLEMENT CONTAINER WITH INFO WHEN FILE NOT CHOSEN
+        # TODO: it's midnight i don't wanna deal with this now
+        extention = os.path.splitext(f)
+        if extention == '.bmp':
+            pass
+        else:
+            pass
 
-        encrypt(self.selected_file, self.alg_combo.currentText(), self.mode_combo.currentText(), self.password_edit.text())
+        #encrypt(self.selected_file, self.alg_combo.currentText(), self.mode_combo.currentText(), self.password_edit.text())
+
 
     def decrypt_file(self):
-        if self.selected_file is None:
+        f = self.selected_file
+        if f is None:
             print("ups something wrong pls fix me ")
             #self.info_box = "-_-"
-        decrypt(self.selected_file, self.alg_combo.currentText(), self.mode_combo.currentText(), self.password_edit.text())
+        extention = os.path.splitext(f)
+        # TODO: or with this
+        if extention == '.bmp':
+            pass
+        else:
+            pass
+        # decrypt(self.selected_file, self.alg_combo.currentText(), self.mode_combo.currentText(), self.password_edit.text())

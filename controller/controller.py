@@ -19,10 +19,13 @@ def image_to_bytes(path):
         return byte_io.getvalue()
 
 def bmp_file_size(bmp_raw: bytes):
+    # in the bmp header size is located on the second byte and has a size of 4 bytes
+    # bmp is always litte endian, always signed
     return int.from_bytes(bmp_raw[2:6], byteorder="little", signed=False)
 
 def bmp_pixel_data_offset(bmp_raw: bytes):
-    # bmp is always litte endian, always signed
+    # at the 10th byte of the header info about where the pixel data starts is stored
+    # its called pixel offset, it is 4 byte, little-endian integer
     return int.from_bytes(bmp_raw[10:14], byteorder="little", signed=False)
 
 def bytes_to_image(data, path):
@@ -49,6 +52,7 @@ def encrypt_bmp_file(input_path, output_path, algType, mode, password):
     pixel_offset = bmp_pixel_data_offset(img_raw)
     encrypted_bytes, encryption_offset \
         = encrypt(img_raw[pixel_offset:], algType, mode, password)
+    # don't forget to include the offset!
     encrypted_image = img_raw[:pixel_offset] + encryption_offset + encrypted_bytes
     bytes_to_file(encrypted_image, output_path)
 
