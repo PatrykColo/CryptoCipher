@@ -7,15 +7,16 @@ from Crypto.Util.Padding import pad, unpad
 from PIL import Image
 import io
 
-def image_to_bytes(path):
+def file_to_bytes(path):
     with open(path, "rb") as f:
         return f.read()
-    # with Image.open(path) as img:
-    #     img = img.convert("RGB")  #
-    #     byte_io = io.BytesIO()
-    #     img.save(byte_io, format="BMP")
-    #     return byte_io.getvalue()
 
+def image_to_bytes(path):
+    with Image.open(path) as img:
+        img = img.convert("RGB")
+        byte_io = io.BytesIO()
+        img.save(byte_io, format="BMP")
+        return byte_io.getvalue()
 
 def bmp_file_size(bmp_raw: bytes):
     return int.from_bytes(bmp_raw[2:6], byteorder="little", signed=False)
@@ -25,11 +26,38 @@ def bmp_pixel_data_offset(bmp_raw: bytes):
     return int.from_bytes(bmp_raw[10:14], byteorder="little", signed=False)
 
 def bytes_to_image(data, path):
+    img = Image.open(io.BytesIO(data))
+    img.save(path)
+
+def bytes_to_file(data, path):
     with open(path, "wb") as f:
         f.write(data)
-    # img = Image.open(io.BytesIO(data))
-    # img.save(path)
 
+def encrypt_any_file(input_path, output_path, algType, mode, password):
+    file_bytes = file_to_bytes(input_path)
+    encrypted_bytes, offset = encrypt(file_bytes, algType, mode, password)
+    with open(output_path, "wb") as f:
+        f.write(offset + encrypted_bytes)
+
+def decrypt_any_file(input_path, output_path, algType, mode, password):
+    file_bytes = file_to_bytes(input_path)
+    decrypted_bytes = decrypt(file_bytes, algType, mode, password)
+    bytes_to_file(decrypted_bytes, output_path)
+
+def encrypt_bmp_file(input_path, output_path, algType, mode, password):
+    img_raw = file_to_bytes(input_path)
+    pixel_offset = bmp_pixel_data_offset(img_raw)
+    encrypted_bytes, encryption_offset \
+        = encrypt(img_raw[pixel_offset:], algType, mode, password)
+    encrypted_image = img_raw[:pixel_offset] + encryption_offset + encrypted_bytes
+    bytes_to_file(encrypted_image, output_path)
+
+def decrypt_bmp_file(input_path, output_path, algType, mode, password):
+    img_raw_encr = file_to_bytes(input_path)
+    pixel_offset = bmp_pixel_data_offset(img_raw_encr)
+    decrypted_bytes = decrypt(img_raw_encr[pixel_offset:], algType, mode, password)
+    decrypted_image = img_raw_encr[:pixel_offset] + decrypted_bytes
+    bytes_to_file(decrypted_image, output_path)
 
 def encrypt_AES(data, mode, key):
     encrypted = None
@@ -86,7 +114,6 @@ def encrypt_DES(data, mode, key):
 def encrypt(data, algType, mode, password):
     print(algType, mode, password)
     salt = b'cyberbezpieczenstwo'
-    # img_bytes = image_to_bytes(path)
     if algType == "AES":
         key = PBKDF2(password, salt, dkLen=16, count=100_000, hmac_hash_module=SHA256)
         encrypted_bytes, offset = encrypt_AES(data, mode, key)
@@ -94,8 +121,6 @@ def encrypt(data, algType, mode, password):
         key = PBKDF2(password, salt, dkLen=8, count=100_000, hmac_hash_module=SHA256)
         encrypted_bytes, offset = encrypt_DES(data, mode, key)
 
-    # with open("zaszyfrowany.bin", "wb") as f:
-    #     f.write(offset + encrypted_bytes)
     return encrypted_bytes, offset
 
 def decrypt_AES(data, mode, key):
@@ -137,8 +162,6 @@ def decrypt_DES(data, mode, key):
 
 def decrypt(data, algType, mode, password):
     print(algType, mode, password)
-    # with open(path, "rb") as f:
-    #     data = f.read()
     salt = b'cyberbezpieczenstwo'
     decrypted_bytes = None
     if algType == "AES":
@@ -148,5 +171,4 @@ def decrypt(data, algType, mode, password):
         key = PBKDF2(password, salt, dkLen=8, count=100_000, hmac_hash_module=SHA256)
         decrypted_bytes = decrypt_DES(data, mode, key)
 
-    # bytes_to_image(decrypted_bytes, "odszyfrowany_obrazek.bmp")
     return decrypted_bytes
