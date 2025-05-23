@@ -8,16 +8,27 @@ from PIL import Image
 import io
 
 def image_to_bytes(path):
-    with Image.open(path) as img:
-        img = img.convert("RGB")  #
-        byte_io = io.BytesIO()
-        img.save(byte_io, format="BMP")
-        return byte_io.getvalue()
+    with open(path, "rb") as f:
+        return f.read()
+    # with Image.open(path) as img:
+    #     img = img.convert("RGB")  #
+    #     byte_io = io.BytesIO()
+    #     img.save(byte_io, format="BMP")
+    #     return byte_io.getvalue()
 
+
+def bmp_file_size(bmp_raw: bytes):
+    return int.from_bytes(bmp_raw[2:6], byteorder="little", signed=False)
+
+def bmp_pixel_data_offset(bmp_raw: bytes):
+    # bmp is always litte endian, always signed
+    return int.from_bytes(bmp_raw[10:14], byteorder="little", signed=False)
 
 def bytes_to_image(data, path):
-    img = Image.open(io.BytesIO(data))
-    img.save(path)
+    with open(path, "wb") as f:
+        f.write(data)
+    # img = Image.open(io.BytesIO(data))
+    # img.save(path)
 
 
 def encrypt_AES(data, mode, key):
@@ -72,19 +83,20 @@ def encrypt_DES(data, mode, key):
 
     return encrypted, offset
 
-def encrypt(path, algType, mode, password):
-    print(path, algType, mode, password)
+def encrypt(data, algType, mode, password):
+    print(algType, mode, password)
     salt = b'cyberbezpieczenstwo'
-    img_bytes = image_to_bytes(path)
+    # img_bytes = image_to_bytes(path)
     if algType == "AES":
         key = PBKDF2(password, salt, dkLen=16, count=100_000, hmac_hash_module=SHA256)
-        encrypted_bytes, offset = encrypt_AES(img_bytes, mode, key)
+        encrypted_bytes, offset = encrypt_AES(data, mode, key)
     else:
         key = PBKDF2(password, salt, dkLen=8, count=100_000, hmac_hash_module=SHA256)
-        encrypted_bytes, offset = encrypt_DES(img_bytes, mode, key)
+        encrypted_bytes, offset = encrypt_DES(data, mode, key)
 
-    with open("zaszyfrowany.bin", "wb") as f:
-        f.write(offset + encrypted_bytes)
+    # with open("zaszyfrowany.bin", "wb") as f:
+    #     f.write(offset + encrypted_bytes)
+    return encrypted_bytes, offset
 
 def decrypt_AES(data, mode, key):
     decrypted = None
@@ -123,10 +135,10 @@ def decrypt_DES(data, mode, key):
 
     return decrypted
 
-def decrypt(path, algType, mode, password):
-    print(path, algType, mode, password)
-    with open(path, "rb") as f:
-        data = f.read()
+def decrypt(data, algType, mode, password):
+    print(algType, mode, password)
+    # with open(path, "rb") as f:
+    #     data = f.read()
     salt = b'cyberbezpieczenstwo'
     decrypted_bytes = None
     if algType == "AES":
@@ -136,4 +148,5 @@ def decrypt(path, algType, mode, password):
         key = PBKDF2(password, salt, dkLen=8, count=100_000, hmac_hash_module=SHA256)
         decrypted_bytes = decrypt_DES(data, mode, key)
 
-    bytes_to_image(decrypted_bytes, "odszyfrowany_obrazek.bmp")
+    # bytes_to_image(decrypted_bytes, "odszyfrowany_obrazek.bmp")
+    return decrypted_bytes
