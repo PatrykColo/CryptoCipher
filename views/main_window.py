@@ -1,7 +1,7 @@
 import os
 
 import PySide6
-from PyQt6.QtCore import QDir
+from PySide6.QtCore import QDir
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QMainWindow, QLabel, QPushButton, QWidget, QVBoxLayout, QFileDialog, QHBoxLayout, \
@@ -218,30 +218,37 @@ class MainWindow(QMainWindow):
 
     def encrypt_file(self):
         f = self.selected_path
-        if f is None:
-            print("null")
-            # self.info_box = "chujnia" #TODO IMPLEMENT CONTAINER WITH INFO WHEN FILE NOT CHOSEN
-        # TODO: it's midnight i don't wanna deal with this now
-        extention = os.path.splitext(f)
+        extention = get_file_extension(f)
+        alg = self.alg_combo.currentText()
+        mode = self.mode_combo.currentText()
+        name = os.path.basename(f)[:-4]
+        password = self.password_edit.text()
+        if password == "":
+            self.info_box = "Nie podano hasła"
+            return
+        output_path = f"{self.output_folder}/{name}_{alg}_{mode}{extention}"
         if extention == '.bmp':
-            pass
+            encrypt_bmp_file(f, output_path, alg, mode, password)
         else:
-            pass
-
-        #encrypt(self.selected_file, self.alg_combo.currentText(), self.mode_combo.currentText(), self.password_edit.text())
-
+            encrypt_any_file(f, output_path, alg, mode, password)
+        self.info_box = "Szyfrowanie zakończone"
 
     def decrypt_file(self):
-        f = self.selected_file
-        if f is None:
-            print("ups something wrong pls fix me ")
-            #self.info_box = "-_-"
-        extention = os.path.splitext(f)
-        # TODO: or with this
+        f = self.selected_path
+        extention = get_file_extension(f)
+        alg = self.alg_combo.currentText()
+        mode = self.mode_combo.currentText()
+        name = os.path.basename(f)[:-4]
+        password = self.password_edit.text()
+        if password == "":
+            self.info_box = "Nie podano hasła"
+            return
+        output_path = f"{self.output_folder}/{name}_{alg}_{mode}{extention}"
         if extention == '.bmp':
-            pass
+            decrypt_bmp_file(f, output_path, alg, mode, password)
         else:
-            pass
-        # decrypt(self.selected_file, self.alg_combo.currentText(), self.mode_combo.currentText(), self.password_edit.text())
+            decrypt_any_file(f, output_path, alg, mode, password)
+        self.info_box = "Szyfrowanie zakończone"
 
-
+def get_file_extension(path: str):
+    return os.path.splitext(path)[1]
