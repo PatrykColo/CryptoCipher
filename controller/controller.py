@@ -4,19 +4,19 @@ from Crypto.Hash import SHA256
 from Crypto.Util import Counter
 from Crypto.Random import get_random_bytes
 from Crypto.Util.Padding import pad, unpad
-from PIL import Image
+#from PIL import Image
 import io
 
 def file_to_bytes(path):
     with open(path, "rb") as f:
         return f.read()
 
-def image_to_bytes(path):
-    with Image.open(path) as img:
-        img = img.convert("RGB")
-        byte_io = io.BytesIO()
-        img.save(byte_io, format="BMP")
-        return byte_io.getvalue()
+# def image_to_bytes(path):
+#     with Image.open(path) as img:
+#         img = img.convert("RGB")
+#         byte_io = io.BytesIO()
+#         img.save(byte_io, format="BMP")
+#         return byte_io.getvalue()
 
 def bmp_file_size(bmp_raw: bytes):
     # in the bmp header size is located on the second byte and has a size of 4 bytes
@@ -28,9 +28,9 @@ def bmp_pixel_data_offset(bmp_raw: bytes):
     # its called pixel offset, it is 4 byte, little-endian integer
     return int.from_bytes(bmp_raw[10:14], byteorder="little", signed=False)
 
-def bytes_to_image(data, path):
-    img = Image.open(io.BytesIO(data))
-    img.save(path)
+# def bytes_to_image(data, path):
+#     img = Image.open(io.BytesIO(data))
+#     img.save(path)
 
 def bytes_to_file(data, path):
     with open(path, "wb") as f:

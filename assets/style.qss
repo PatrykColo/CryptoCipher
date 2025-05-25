@@ -19,12 +19,26 @@ config_btn{
     padding: 10px;
 }
 
+QPushButton#folder_button{
+    background: none;
+}
+
+QPushButton#folder_button:hover{
+    background-color: #8d9491;
+}
+
 config_btn:hover{
     background-color: #8d9491;
 }
 
 QWidget#configuration_container QLabel{
     background: None;
+}
+
+QLabel#selected_file_label{
+    color: #ffffff;
+    font-family: "Segue UI", "Roboto", sans-serif;
+    font-size: 18px;
 }
 
 QLabel {
@@ -131,6 +145,45 @@ QPushButton:hover {
 
 QPushButton:pressed {
     background-color: #2a5d91;
+}
+
+
+QWidget#output_container{
+    background: None;
+}
+
+QListWidget {
+    background: None;
+    padding: 5px;
+    font-size: 14px;
+}
+
+QListWidget::item {
+    background-color: #3e3e3e;
+    padding: 8px;
+    margin: 4px;
+    border-radius: 4px;
+    outline: none;
+}
+
+QListWidget::item:focus {
+    border: none;
+    outline: none;
+}
+
+QListWidget::item:selected:focus {
+    outline: none;
+    border: none;
+}
+
+QListWidget::item:hover {
+    background-color: #3b4541;
+}
+
+QListWidget::item:selected {
+    background-color: #a0c4ff;
+    color: black;
+    outline: none;
 }
 
 

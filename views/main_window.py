@@ -1,8 +1,12 @@
 import os
 
 import PySide6
+from PySide6.QtCore import QSize
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QMainWindow, QLabel, QPushButton, QWidget, QVBoxLayout, QFileDialog, QHBoxLayout, \
-    QComboBox, QFormLayout, QLineEdit
+    QComboBox, QFormLayout, QLineEdit, QListWidgetItem, QListWidget
+
+
 
 from controller.controller import encrypt, decrypt, encrypt_any_file, encrypt_bmp_file, \
     decrypt_any_file, decrypt_bmp_file
@@ -14,20 +18,39 @@ class MainWindow(QMainWindow):
 
         self.selected_file = None
         self.setWindowTitle("CryptoCypher1.0")
-        self.setMinimumSize(700, 600)
-
+        self.setMinimumSize(900, 600)
+        self.selected_path = None
+        self.output_folder = None
 
         central = QWidget(self)
         self.setCentralWidget(central)
 
+        file_container = QWidget()
+        file_container.setObjectName("file_container")
+        file_container.setMaximumWidth(400)
+
         # 1) Wybór pliku:
-        self.file_label = QLabel("Nie wybrano pliku.")
-        self.file_btn = QPushButton("Wybierz plik")
+        #self.file_label = QLabel("Nie wybrano pliku.")
+        self.file_btn = QPushButton("Wybierz pliki")
         self.file_btn.setObjectName("file_button")
-        self.file_btn.clicked.connect(self.choose_file)
+        self.file_btn.clicked.connect(self.open_file_dialog)
+
+        self.file_list_widget = QListWidget()
+        self.file_list_widget.itemClicked.connect(self.on_file_selected)
+
+        file_layout = QVBoxLayout(file_container)
+        file_layout.setAlignment(PySide6.QtCore.Qt.AlignTop | PySide6.QtCore.Qt.AlignLeft)
+        file_layout.addWidget(self.file_btn)
+        file_layout.addWidget(self.file_list_widget)
 
 
         # 2) Konfiguracja szyfrowania:
+
+        self.selected_file_label = QLabel("Nazwa pliku...")
+        self.selected_file_label.setObjectName("selected_file_label")
+        self.selected_file_label.setAlignment(PySide6.QtCore.Qt.AlignCenter)
+        self.selected_file_label.setContentsMargins(0, 10, 0, 10)
+
         self.mode_combo = QComboBox()
         self.mode_combo.addItems(["ECB", "CBC", "CTR"])
 
@@ -49,20 +72,18 @@ class MainWindow(QMainWindow):
 
         self.info_box = QLabel("Operacja zakończona sukcesem!")
 
-        config_container = QWidget()
-        config_container.setObjectName("configuration_container")
-        config_container.setMaximumWidth(400)
+        self.config_container = QWidget()
+        self.config_container.setObjectName("configuration_container")
+        self.config_container.setMaximumWidth(500)
 
 
 
-        config_layout = QVBoxLayout(config_container)
+        config_layout = QVBoxLayout(self.config_container)
         config_layout.setAlignment(PySide6.QtCore.Qt.AlignTop)
 
-        file_layout = QVBoxLayout()
-        file_layout.addWidget(self.file_label)
-        file_layout.addWidget(self.file_btn)
 
-        config_layout.addLayout(file_layout)
+
+        #config_layout.addLayout(file_layout)
 
         form = QFormLayout()
         form.setVerticalSpacing(12)
@@ -71,42 +92,107 @@ class MainWindow(QMainWindow):
         form.addRow("TRYB:", self.mode_combo)
         form.addRow("ALGORYTM:", self.alg_combo)
         form.addRow("HASŁO:", self.password_edit)
-        form.addRow("IV:", self.iv_edit)
-
-        form.addRow(self.encrypt_btn)
-        form.addRow(self.decrypt_btn)
-        form.addRow(self.gen_key_and_iv)
 
 
 
+        self.output_dict_label = QLabel(".../")
+
+        label = QLabel("KATALOG WYJŚCIOWY:")
+
+        self.folder_button = QPushButton()
+        self.folder_button.setObjectName("folder_button")
+        self.folder_button.setIcon(QIcon("icons/folder.png"))
+        self.folder_button.setIconSize(QSize(24, 24))
+        self.folder_button.setFixedSize(32, 32)
+        self.folder_button.setStyleSheet("border: none;")
+        self.folder_button.clicked.connect(self.output_dict_dialog)
+
+        output_layout = QHBoxLayout()
+        output_layout.addWidget(label)
+        output_layout.addWidget(self.output_dict_label)
+        output_layout.addWidget(self.folder_button)
+
+        output_container = QWidget()
+        output_container.setObjectName("output_container")
+        output_container.setLayout(output_layout)
+
+        #form.addRow("IV:", self.iv_edit)
+
+        #form.addRow(self.encrypt_btn)
+        #form.addRow(self.decrypt_btn)
+
+        config_layout.addWidget(self.selected_file_label)
         config_layout.addLayout(form)
+        config_layout.addWidget(output_container)
+        config_layout.addWidget(self.encrypt_btn)
+        config_layout.addWidget(self.decrypt_btn)
         config_layout.addWidget(self.info_box)
         # 3) Główny układ
         main_layout = QHBoxLayout(central)
-        main_layout.addLayout(file_layout)
-        main_layout.addWidget(config_container)
 
+        main_layout.addWidget(file_container)
+        #main_layout.addLayout(file_layout)
+        #main_layout.addLayout(config_layout)
+        main_layout.addWidget(self.config_container)
+        self.hide_config_container()
         #self.setStyleSheet(load_stylesheet())
 
 
-    def choose_file(self):
-        file_path, _ = QFileDialog.getOpenFileName(
-            self,
-            "Wybierz plik",
-            # os.path.expanduser("~"),  # katalog domowy jako startowy
-            os.path.abspath("memory/"),
-            "Wszystkie pliki (*);;Pliki tekstowe (*.txt)"
-        )
+    # def choose_file(self):
+    #     file_path, _ = QFileDialog.getOpenFileName(
+    #         self,
+    #         "Wybierz plik",
+    #         # os.path.expanduser("~"),  # katalog domowy jako startowy
+    #         os.path.abspath("memory/"),
+    #         "Wszystkie pliki (*);;Pliki tekstowe (*.txt)"
+    #     )
+    #
+    #     if file_path:
+    #         self.selected_file = file_path
+    #         self.file_label.setText(f"Wybrano: {os.path.basename(file_path)}")
+    #         # print(self.mode_combo.currentText())
+    #         # print(self.alg_combo.currentText())
+    #         # self.process_file(file_path) #TODO
 
-        if file_path:
-            self.selected_file = file_path
-            self.file_label.setText(f"Wybrano: {os.path.basename(file_path)}")
-            # print(self.mode_combo.currentText())
-            # print(self.alg_combo.currentText())
-            # self.process_file(file_path) #TODO
+    def open_file_dialog(self):
+        files, _ = QFileDialog.getOpenFileNames(self, "Wybierz pliki", os.path.abspath("memory/"))
+        if files:
+            self.file_list_widget.clear()
+            for file_path in files:
+                file_name = os.path.basename(file_path)
+                item = QListWidgetItem(file_name)
+                item.setData(256, file_path)
+                self.file_list_widget.addItem(item)
+
+    def on_file_selected(self, item):
+        self.show_config_container()
+        self.selected_file_label.setText(item.text().upper())
+        self.selected_path = item.data(256) #przechowujemy path wybranego pliku
+
+    def output_dict_dialog(self):
+        folder = QFileDialog.getExistingDirectory(None, "Wybierz katalog do zapisu", dir='.', options=QFileDialog.ShowDirsOnly)
+
+        if folder:
+            self.output_folder = folder
+            self.output_dict_label.setText(folder)
+
+    def show_config_container(self):
+        self.config_container.setStyleSheet("")
+        self.mode_combo.setVisible(True)
+        self.alg_combo.setVisible(True)
+        self.folder_button.show()
+        self.config_container.setEnabled(True)
+
+    def hide_config_container(self):
+        self.config_container.setStyleSheet("background-color: transparent; color: transparent; border: none;")
+        self.mode_combo.setVisible(False)
+        self.alg_combo.setVisible(False)
+        self.folder_button.hide()
+        self.config_container.setEnabled(False)
+
 
     def encrypt_file(self):
-        f = self.selected_file
+        f = self.selected_path
         if f is None:
             print("null")
             # self.info_box = "chujnia" #TODO IMPLEMENT CONTAINER WITH INFO WHEN FILE NOT CHOSEN
