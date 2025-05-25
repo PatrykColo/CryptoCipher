@@ -234,9 +234,9 @@ class MainWindow(QMainWindow):
             return
         output_path = f"{self.output_folder}/{name}_{alg}_{mode}{extention}"
         if extention == '.bmp':
-            encrypt_bmp_file(f, output_path, alg, mode, password, mistake=self.checkbox)
+            encrypt_bmp_file(f, output_path, alg, mode, password, mistake=self.modify_byte)
         else:
-            encrypt_any_file(f, output_path, alg, mode, password, mistake=self.checkbox)
+            encrypt_any_file(f, output_path, alg, mode, password, mistake=self.modify_byte)
         self.info_box = "Szyfrowanie zakończone"
 
     def decrypt_file(self):
