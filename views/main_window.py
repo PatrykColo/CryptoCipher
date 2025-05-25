@@ -176,20 +176,26 @@ class MainWindow(QMainWindow):
     #         # print(self.alg_combo.currentText())
     #         # self.process_file(file_path) #TODO
 
+    def on_file_selected(self, item):
+        self.show_config_container()
+        self.selected_file_label.setText(item.text().upper())
+        self.selected_path = item.data(256) #przechowujemy path wybranego pliku
+
     def open_file_dialog(self):
         files, _ = QFileDialog.getOpenFileNames(self, "Wybierz pliki", os.path.abspath("memory/"))
         if files:
             self.file_list_widget.clear()
+            first = True
             for file_path in files:
                 file_name = os.path.basename(file_path)
                 item = QListWidgetItem(file_name)
                 item.setData(256, file_path)
                 self.file_list_widget.addItem(item)
+                if first:
+                    first = False
+                    self.on_file_selected(item)
 
-    def on_file_selected(self, item):
-        self.show_config_container()
-        self.selected_file_label.setText(item.text().upper())
-        self.selected_path = item.data(256) #przechowujemy path wybranego pliku
+
 
     def output_dict_dialog(self):
         home = QDir.homePath()
