@@ -28,10 +28,6 @@ Funkcja $f$ przyjmuje jako parametry 32-bitowy blok danych $D$ oraz 48-bitowy kl
 3. Podziel X na 8 grup po 6 bitów od $B_1$ do $B_8$. Dokonaj konwersji X na 32-bitową liczbę w następujący sposób: z tych najstarszego i najmłodszego bitu złóż liczbę 2-bitową (0..3). Liczba ta wskazuje na rząd w tabeli dekodowania $S_i$. Na kolumnę w owej tableki wskazuję środkowe 4 bity. Z tabeli tej odczytaj liczbę która będzie z przedziału 0..15 (4-bity). Złóż wszystkie wyniki w kolejności, wynik nazwijmy $O$
 4. Wykonaj permutację $O$ zgodnie z tablą permutacji, otrzymana permutacja to wynik funkcji.
 
-## AES
-
-### TODO
-
 ## Tryby szyfrowania
 
 Zarówno DES jak i AES korzystają z trybów szyfrowania. Są to warianty algorytmu w które różnią się sposobem tworzenia bloków wejściowych lub wyjściowych. W projekcie zastosowano trzy rózne tryby szyfrowania.
@@ -64,5 +60,7 @@ Interfejs aplikacji napisany jest za pomocą biblioteki PySide6, funkcje kryptog
 # Referencje
 
 Strona z obrazami testowymi: https://openclipart.org
+
 Dobry opis DES: https://pl.wikipedia.org/wiki/Data_Encryption_Standard
+
 Kolejny dobry opis DES: https://billstclair.com/grabbe/des.htm

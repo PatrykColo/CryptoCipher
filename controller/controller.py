@@ -183,8 +183,8 @@ def decrypt(data, algType, mode, password):
 
 
 def flip_random_byte(cipher: bytearray) -> None:
-    idx = random.randrange(len(cipher[:-1000]))
-    for i in range(0, 1000):
+    idx = len(cipher) - random.randrange(len(cipher[:-5000]))
+    for i in range(0, 4000):
         # bit_to_flip = 1 << random.randrange(8)
         # cipher[idx] ^= bit_to_flip
         cipher[idx+i] = random.randint(0, 255)
