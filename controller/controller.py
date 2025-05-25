@@ -40,9 +40,7 @@ def bytes_to_file(data, path):
 
 def encrypt_any_file(input_path, output_path, algType, mode, password, mistake=False):
     file_bytes = file_to_bytes(input_path)
-    if mistake:
-        flip_8_bytes(file_bytes)
-    encrypted_bytes, offset = encrypt(file_bytes, algType, mode, password)
+    encrypted_bytes, offset = encrypt(file_bytes, algType, mode, password, mistake)
     with open(output_path, "wb") as f:
         f.write(offset + encrypted_bytes)
 
@@ -54,10 +52,8 @@ def decrypt_any_file(input_path, output_path, algType, mode, password):
 def encrypt_bmp_file(input_path, output_path, algType, mode, password, mistake=False):
     img_raw = file_to_bytes(input_path)
     pixel_offset = bmp_pixel_data_offset(img_raw)
-    if mistake:
-        flip_8_bytes(img_raw[pixel_offset:])
     encrypted_bytes, encryption_offset \
-        = encrypt(img_raw[pixel_offset:], algType, mode, password)
+        = encrypt(img_raw[pixel_offset:], algType, mode, password, mistake)
     # don't forget to include the offset!
     encrypted_image = img_raw[:pixel_offset] + encryption_offset + encrypted_bytes
     bytes_to_file(encrypted_image, output_path)
@@ -121,7 +117,7 @@ def encrypt_DES(data, mode, key):
 
     return encrypted, offset
 
-def encrypt(data, algType, mode, password):
+def encrypt(data, algType, mode, password, mistake=False):
     print(algType, mode, password)
     salt = b'cyberbezpieczenstwo'
     if algType == "AES":
@@ -130,7 +126,9 @@ def encrypt(data, algType, mode, password):
     else:
         key = PBKDF2(password, salt, dkLen=8, count=100_000, hmac_hash_module=SHA256)
         encrypted_bytes, offset = encrypt_DES(data, mode, key)
-
+    encrypted_bytes = bytearray(encrypted_bytes)
+    if mistake:
+        flip_random_byte(encrypted_bytes)
     return encrypted_bytes, offset
 
 def decrypt_AES(data, mode, key):
@@ -185,9 +183,12 @@ def decrypt(data, algType, mode, password):
 
 
 def flip_random_byte(cipher: bytearray) -> None:
-    idx = random.randrange(len(cipher))
-    bit_to_flip = 1 << random.randrange(8)
-    cipher[idx] ^= bit_to_flip
+    idx = random.randrange(len(cipher[:-1000]))
+    for i in range(0, 1000):
+        # bit_to_flip = 1 << random.randrange(8)
+        # cipher[idx] ^= bit_to_flip
+        cipher[idx+i] = random.randint(0, 255)
+
 
 def flip_8_bytes(cipher: bytearray):
     for i in range(0, 8):
