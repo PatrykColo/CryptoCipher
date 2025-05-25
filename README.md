@@ -25,12 +25,27 @@ DES w teorii używa 64-bitowego klucza, w praktyce jednak ostatnie 8 bitów nieu
 Funkcja $f$ przyjmuje jako parametry 32-bitowy blok danych $D$ oraz 48-bitowy klucz $K$.
 1. Rozszerz $D$ do 48 bitów używając tabeli permutacji, wynik tej opracji nazwijmy $E$
 2. Wykonaj xor $E$ i $K$, nazwijmy wynik X.
-3. Podziel X na 8 grup po 6 bitów od $B_1$ do $B_8$. Dokonaj konwersji X na 32-bitową liczbę w następujący sposób: z tych najstarszego i najmłodszego bitu złóż liczbę 2-bitową (0..3). Liczba ta wskazuje na rząd w tabeli dekodowania $S_i$. Na kolumnę w owej tableki wskazuję środkowe 4 bity. Z tabeli tej odczytaj liczbę która będzie z przedziału 0..15 (4-bity). Złóż wszystkie wyniki w kolejności, wynik nazwijmy O
-4. Wykonaj permutację O zgodnie z tablą permutacji, otrzymana permutacja to wynik funkcji.
+3. Podziel X na 8 grup po 6 bitów od $B_1$ do $B_8$. Dokonaj konwersji X na 32-bitową liczbę w następujący sposób: z tych najstarszego i najmłodszego bitu złóż liczbę 2-bitową (0..3). Liczba ta wskazuje na rząd w tabeli dekodowania $S_i$. Na kolumnę w owej tableki wskazuję środkowe 4 bity. Z tabeli tej odczytaj liczbę która będzie z przedziału 0..15 (4-bity). Złóż wszystkie wyniki w kolejności, wynik nazwijmy $O$
+4. Wykonaj permutację $O$ zgodnie z tablą permutacji, otrzymana permutacja to wynik funkcji.
 
 ## AES
 
 ### TODO
+
+## Tryby szyfrowania
+
+Zarówno DES jak i AES korzystają z trybów szyfrowania. Są to warianty algorytmu w które różnią się sposobem tworzenia bloków wejściowych lub wyjściowych. W projekcie zastosowano trzy rózne tryby szyfrowania.
+
+### ECB
+ECB - z ang. Electronic Codebook. Jest to tryb w którym każdy blok tekstu jawnego szyfrowany jest oddzielnie w jeden blok szyfrogramu.
+
+### CBC
+
+CBC - z ang. Cipher Blokck Chaining. W tym trybie pracy każdy blok wejściowy jest XORem poprzedniego bloku szyfrogramu i obecnego bloku tekstu jawnego. Pierwszy blok zamiast poprzedniego bloku szyfrogramu używa tzw. wektora inicjalizyjnego.
+
+### CTR
+
+Ctr - z ang. Counter. W tym unikalnym trybie pracy tekst jawny nie jest wejściem algorytmu szyfrowania blokowego. Zamiast tego używa się połączenia bajtów nonce wraz z licznikiem który inkrementowany jest co blok. Wyjście algorytmu szyfrującego XORuje się z blokiem tekstu jawnego.
 
 # Funkcjonalności
 
