@@ -57,15 +57,9 @@ Ctr - z ang. Counter. W tym unikalnym trybie pracy tekst jawny nie jest wejście
 
 ## Windows
 
-### TODO
-
-## Linux
-
-### TODO (może niepotrzebne)
-
 # Szczegóły techniczne aplikacji
 
-Interfejs aplikacji napisany jest za pomocą biblioteki PySide6, funkcje kryptograficzne wzięte są z biblioteki krypto.
+Interfejs aplikacji napisany jest za pomocą biblioteki PySide6, funkcje kryptograficzne wzięte są z biblioteki pycryptodome.
 
 # Referencje
 

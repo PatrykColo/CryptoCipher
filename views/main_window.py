@@ -72,7 +72,7 @@ class MainWindow(QMainWindow):
 
         self.gen_key_and_iv = QPushButton("Generate Key and IV")
 
-        self.info_box = QLabel("Operacja zakończona sukcesem!")
+        self.info_box = QLabel("")
 
         self.config_container = QWidget()
         self.config_container.setObjectName("configuration_container")
@@ -228,9 +228,9 @@ class MainWindow(QMainWindow):
             return
         output_path = f"{self.output_folder}/{name}_{alg}_{mode}{extention}"
         if extention == '.bmp':
-            encrypt_bmp_file(f, output_path, alg, mode, password)
+            encrypt_bmp_file(f, output_path, alg, mode, password, mistake=self.checkbox)
         else:
-            encrypt_any_file(f, output_path, alg, mode, password)
+            encrypt_any_file(f, output_path, alg, mode, password, mistake=self.checkbox)
         self.info_box = "Szyfrowanie zakończone"
 
     def decrypt_file(self):

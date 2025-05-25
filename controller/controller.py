@@ -6,10 +6,12 @@ from Crypto.Random import get_random_bytes
 from Crypto.Util.Padding import pad, unpad
 #from PIL import Image
 import io
+import random
 
 def file_to_bytes(path):
     with open(path, "rb") as f:
-        return f.read()
+        byt: bytearray = bytearray(f.read())
+        return byt
 
 # def image_to_bytes(path):
 #     with Image.open(path) as img:
@@ -36,8 +38,10 @@ def bytes_to_file(data, path):
     with open(path, "wb") as f:
         f.write(data)
 
-def encrypt_any_file(input_path, output_path, algType, mode, password):
+def encrypt_any_file(input_path, output_path, algType, mode, password, mistake=False):
     file_bytes = file_to_bytes(input_path)
+    if mistake:
+        flip_8_bytes(file_bytes)
     encrypted_bytes, offset = encrypt(file_bytes, algType, mode, password)
     with open(output_path, "wb") as f:
         f.write(offset + encrypted_bytes)
@@ -47,9 +51,11 @@ def decrypt_any_file(input_path, output_path, algType, mode, password):
     decrypted_bytes = decrypt(file_bytes, algType, mode, password)
     bytes_to_file(decrypted_bytes, output_path)
 
-def encrypt_bmp_file(input_path, output_path, algType, mode, password):
+def encrypt_bmp_file(input_path, output_path, algType, mode, password, mistake=False):
     img_raw = file_to_bytes(input_path)
     pixel_offset = bmp_pixel_data_offset(img_raw)
+    if mistake:
+        flip_8_bytes(img_raw[pixel_offset:])
     encrypted_bytes, encryption_offset \
         = encrypt(img_raw[pixel_offset:], algType, mode, password)
     # don't forget to include the offset!
@@ -179,10 +185,13 @@ def decrypt(data, algType, mode, password):
 
 
 def flip_random_byte(cipher: bytearray) -> None:
-    import random
     idx = random.randrange(len(cipher))
     bit_to_flip = 1 << random.randrange(8)
     cipher[idx] ^= bit_to_flip
+
+def flip_8_bytes(cipher: bytearray):
+    for i in range(0, 8):
+        cipher[i] = not cipher[i]
 
 
 def flip_byte_at(cipher: bytearray, idx: int, bitmask: int = 0xFF) -> None:
