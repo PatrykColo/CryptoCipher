@@ -22,7 +22,7 @@ DES w teorii używa 64-bitowego klucza, w praktyce jednak ostatnie 8 bitów nieu
 5. Po wykonaniu tych iteracji otrzymujemy blok wyjściowy $O = R_{16} + L_{16}$
 6. Blok wyjściowy permutujemy finalnie za pomocą tabeli permutacji.
 
-Funkcja $f$ przyjmuje jako parametry 32-bitowy blok danych $D$ oraz 48-bitowy klucz $K$.
+Funkcja $f$ przyjmuje jako parametry 32-bitowy blok danych $D$ oraz 48-bitowy klucz $K$, zwraca liczbę 32-bitową.
 1. Rozszerz $D$ do 48 bitów używając tabeli permutacji, wynik tej opracji nazwijmy $E$
 2. Wykonaj xor $E$ i $K$, nazwijmy wynik X.
 3. Podziel X na 8 grup po 6 bitów od $B_1$ do $B_8$. Dokonaj konwersji X na 32-bitową liczbę w następujący sposób: z tych najstarszego i najmłodszego bitu złóż liczbę 2-bitową (0..3). Liczba ta wskazuje na rząd w tabeli dekodowania $S_i$. Na kolumnę w owej tableki wskazuję środkowe 4 bity. Z tabeli tej odczytaj liczbę która będzie z przedziału 0..15 (4-bity). Złóż wszystkie wyniki w kolejności, wynik nazwijmy $O$
@@ -45,17 +45,24 @@ Ctr - z ang. Counter. W tym unikalnym trybie pracy tekst jawny nie jest wejście
 
 # Funkcjonalności
 
-### TODO
-
-# Przykłady użycia
-
-# Budowanie
-
-## Windows
+1. Szyfrowanie i deszyfrowanie plików
+2. Dostępne algorytmy: AES i DES
+3. Dostępne tryby szyfrowania: ECB, CBC i CTR
+4. Specjalna funkcjonalność demonstracyjna dla obrazów w formacie .bmp.
 
 # Szczegóły techniczne aplikacji
 
 Interfejs aplikacji napisany jest za pomocą biblioteki PySide6, funkcje kryptograficzne wzięte są z biblioteki pycryptodome.
+
+# Budowanie
+
+Projekt wymaga pythona 3.11+, oraz bibliotek: PySide6 i pycryptodome.
+
+```cmd
+pip install -r requirements.txt
+<path_to_interpreter> main.py
+```
+
 
 # Referencje
 
