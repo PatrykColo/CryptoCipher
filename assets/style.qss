@@ -186,5 +186,20 @@ QListWidget::item:selected {
     outline: none;
 }
 
+QCheckBox{
+    background: transparent;
+}
+
+QCheckBox::indicator:checked {
+    border: 2px solid #2f5237;
+    border-radius: 4px;
+    background: #62bf76;
+}
+
+QCheckBox::indicator:unchecked {
+    border: 2px solid #555555;
+    border-radius: 4px;
+    background: #3e3e3e;
+}
 
 

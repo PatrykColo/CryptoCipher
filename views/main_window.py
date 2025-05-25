@@ -1,12 +1,11 @@
 import os
 
 import PySide6
+from PyQt6.QtCore import QDir
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QMainWindow, QLabel, QPushButton, QWidget, QVBoxLayout, QFileDialog, QHBoxLayout, \
-    QComboBox, QFormLayout, QLineEdit, QListWidgetItem, QListWidget
-
-
+    QComboBox, QFormLayout, QLineEdit, QListWidgetItem, QListWidget, QCheckBox
 
 from controller.controller import encrypt, decrypt, encrypt_any_file, encrypt_bmp_file, \
     decrypt_any_file, decrypt_bmp_file
@@ -19,8 +18,11 @@ class MainWindow(QMainWindow):
         self.selected_file = None
         self.setWindowTitle("CryptoCypher1.0")
         self.setMinimumSize(900, 600)
-        self.selected_path = None
+        self.selected_path = QDir.homePath()
         self.output_folder = None
+        self.modify_byte = False
+
+
 
         central = QWidget(self)
         self.setCentralWidget(central)
@@ -95,7 +97,7 @@ class MainWindow(QMainWindow):
 
 
 
-        self.output_dict_label = QLabel(".../")
+        self.output_dict_label = QLabel(self.selected_path)
 
         label = QLabel("KATALOG WYJŚCIOWY:")
 
@@ -116,6 +118,22 @@ class MainWindow(QMainWindow):
         output_container.setObjectName("output_container")
         output_container.setLayout(output_layout)
 
+
+        testing_section_label = QLabel("Demonstracja modyfikacji szyfrogramu")
+        testing_section_label.setContentsMargins(0, 20, 0, 10)
+
+        layout = QHBoxLayout(self)
+        layout.setAlignment(PySide6.QtCore.Qt.AlignmentFlag.AlignHCenter)
+        self.checkbox = QCheckBox()
+        self.checkbox.setObjectName("modify_checkbox")
+        self.checkbox.setChecked(False)
+        self.checkbox.toggled.connect(lambda checked: setattr(self, 'modify_byte', checked))
+        self.label = QLabel("Automatycznie zmodyfikuj losowo wybrany bajt szyfrogramu")
+
+        layout.addWidget(self.checkbox)
+        layout.addWidget(self.label)
+
+
         #form.addRow("IV:", self.iv_edit)
 
         #form.addRow(self.encrypt_btn)
@@ -127,6 +145,10 @@ class MainWindow(QMainWindow):
         config_layout.addWidget(self.encrypt_btn)
         config_layout.addWidget(self.decrypt_btn)
         config_layout.addWidget(self.info_box)
+        config_layout.addWidget(testing_section_label)
+        config_layout.addLayout(layout)
+
+
         # 3) Główny układ
         main_layout = QHBoxLayout(central)
 
@@ -170,7 +192,8 @@ class MainWindow(QMainWindow):
         self.selected_path = item.data(256) #przechowujemy path wybranego pliku
 
     def output_dict_dialog(self):
-        folder = QFileDialog.getExistingDirectory(None, "Wybierz katalog do zapisu", dir='.', options=QFileDialog.ShowDirsOnly)
+        home = QDir.homePath()
+        folder = QFileDialog.getExistingDirectory(None, "Wybierz katalog do zapisu", home, options=QFileDialog.ShowDirsOnly)
 
         if folder:
             self.output_folder = folder
@@ -181,6 +204,7 @@ class MainWindow(QMainWindow):
         self.mode_combo.setVisible(True)
         self.alg_combo.setVisible(True)
         self.folder_button.show()
+        self.checkbox.setVisible(True)
         self.config_container.setEnabled(True)
 
     def hide_config_container(self):
@@ -188,6 +212,7 @@ class MainWindow(QMainWindow):
         self.mode_combo.setVisible(False)
         self.alg_combo.setVisible(False)
         self.folder_button.hide()
+        self.checkbox.setVisible(False)
         self.config_container.setEnabled(False)
 
 
@@ -218,3 +243,5 @@ class MainWindow(QMainWindow):
         else:
             pass
         # decrypt(self.selected_file, self.alg_combo.currentText(), self.mode_combo.currentText(), self.password_edit.text())
+
+

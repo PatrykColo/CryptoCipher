@@ -176,3 +176,14 @@ def decrypt(data, algType, mode, password):
         decrypted_bytes = decrypt_DES(data, mode, key)
 
     return decrypted_bytes
+
+
+def flip_random_byte(cipher: bytearray) -> None:
+    import random
+    idx = random.randrange(len(cipher))
+    bit_to_flip = 1 << random.randrange(8)
+    cipher[idx] ^= bit_to_flip
+
+
+def flip_byte_at(cipher: bytearray, idx: int, bitmask: int = 0xFF) -> None:
+    cipher[idx] ^= bitmask
